@@ -1,6 +1,7 @@
 using System;
-using Factory;
-using Singleton;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 
 namespace WPiAA2025
 {
@@ -8,27 +9,43 @@ namespace WPiAA2025
     {
         static void Main(string[] args)
         {
+            var availableSolutions = Directory.GetDirectories("Solutions").Select(Path.GetFileName!).ToArray();
+
             if (args.Length == 0)
             {
-                Console.WriteLine("Usage: dotnet run <pattern>");
-                Console.WriteLine("Available patterns: factory, singleton");
+                Console.WriteLine("Usage: dotnet run <solution>");
+                ListSolutions(availableSolutions);
                 return;
             }
 
-            string pattern = args[0].ToLower();
+            string inputSolution = args[0];
+            var matchingSolution = availableSolutions.FirstOrDefault(p => string.Equals (p, inputSolution, StringComparison.OrdinalIgnoreCase));
+            if (matchingSolution == null)
+            {
+                Console.WriteLine($"Solution '{inputSolution}' not found.");
+                ListSolutions(availableSolutions);
+                return;
+            }
 
-            if (pattern == "factory")
+            string typeName = $"{matchingSolution}.Program";
+            Type? type = Assembly.GetExecutingAssembly().GetType(typeName);
+            MethodInfo? mainMethod = type?.GetMethod("Main", BindingFlags.Public | BindingFlags.Static, null, [typeof(string[])], null);
+
+            try
             {
-                Factory.Program.Main(new string[0]);
+                mainMethod?.Invoke(null, [new string[0]]);
             }
-            else if (pattern == "singleton")
+            catch (Exception ex)
             {
-                Singleton.Program.Main(new string[0]);
+                Console.WriteLine($"Error running {matchingSolution}: {ex.Message}");
             }
-            else
-            {
-                Console.WriteLine("Invalid pattern. Available: factory, singleton");
-            }
+        }
+
+        static void ListSolutions(IEnumerable<string?> solutions)
+        {
+            Console.WriteLine("Available solutions:");
+            foreach (var p in solutions)
+                if (p != null) Console.WriteLine($"  - {p}");
         }
     }
 }
