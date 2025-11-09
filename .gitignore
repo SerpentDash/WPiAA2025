@@ -1,0 +1,36 @@
+# Visual Studio
+.vs/
+bin/
+obj/
+*.user
+*.suo
+*.tmp
+*.log
+*.pdb
+*.cache
+
+# .NET
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# NuGet
+packages/
+*.nupkg
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+
+# OS generated files
+Thumbs.db
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+
+# Temporary files
+*.tmp
+*.swp
+*.bak
