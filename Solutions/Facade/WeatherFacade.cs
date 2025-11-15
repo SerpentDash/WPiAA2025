@@ -5,10 +5,6 @@ using System.Threading.Tasks;
 
 namespace Facade
 {
-    /// <summary>
-    /// Simple facade for OpenWeatherMap current weather service.
-    /// It exposes a small interface to obtain the current temperature and short description.
-    /// </summary>
     public class WeatherFacade : IWeatherFacade
     {
         private static readonly HttpClient _http = new HttpClient();
