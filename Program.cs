@@ -29,11 +29,18 @@ namespace WPiAA2025
 
             string typeName = $"{matchingSolution}.Program";
             Type? type = Assembly.GetExecutingAssembly().GetType(typeName);
-            MethodInfo? mainMethod = type?.GetMethod("Main", BindingFlags.Public | BindingFlags.Static, null, [typeof(string[])], null);
+            MethodInfo? mainMethod = type?.GetMethod("Main", BindingFlags.Public | BindingFlags.Static, null, new[] { typeof(string[]) }, null);
 
             try
             {
-                mainMethod?.Invoke(null, [new string[0]]);
+                // Pass remaining args
+                var toPass = args.Skip(1).ToArray();
+                var result = mainMethod?.Invoke(null, new object?[] { toPass });
+
+                if (result is System.Threading.Tasks.Task task)
+                {
+                    task.GetAwaiter().GetResult();
+                }
             }
             catch (Exception ex)
             {
